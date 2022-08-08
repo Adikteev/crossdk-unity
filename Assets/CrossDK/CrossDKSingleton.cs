@@ -23,7 +23,8 @@ namespace CrossDK
         [SerializeField] private bool _autoCallConfig;
         [SerializeField] private string _appId;
         [SerializeField] private string _apiKey;
-        [SerializeField] private string _idfv;
+        [SerializeField] private string _userId;
+        [SerializeField] private string _deviceId;
 
         private void Awake()
         {
@@ -37,15 +38,15 @@ namespace CrossDK
 
             if (_autoCallConfig)
             {
-                Config(_appId, _apiKey, _idfv);
+                Config(_appId, _apiKey, _userId, _deviceId);
             }
         }
 
         #region CrossDK Methods
 
-        public static void Config(string appId = "", string apiKey = "", string userId = "")
+        public static void Config(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
-            CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId);
+            CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId, deviceId);
         }
 
         public static void DismissOverlay()

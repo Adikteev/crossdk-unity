@@ -49,15 +49,17 @@ void unitySendMessage(const char *method, NSString *message) {
 ///     - appId: current application's App Store ID
 ///     - apiKey: authorization API key
 ///     - userId: user's ID
-void crossDKConfigWithAppId(const char *appId, const char *apiKey, const char *userId) {
+void crossDKConfigWithAppId(const char *appId, const char *apiKey, const char *userId, const char *deviceId) {
     NSString *nsAppID = makeNSString(appId);
     NSString *nsApiKey = makeNSString(apiKey);
     NSString *nsUserId = makeNSString(userId);
+    NSString *nsDeviceId = makeNSString(deviceId);
     [
         CrossDKConfig.shared
         setupWithAppId:nsAppID
         apiKey:nsApiKey
         userId:nsUserId
+        deviceId:nsDeviceId
     ];
 }
 

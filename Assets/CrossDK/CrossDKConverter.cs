@@ -9,7 +9,7 @@ namespace CrossDK
 
 #if UNITY_IOS
         [DllImport("__Internal")]
-        private static extern void crossDKConfigWithAppId(string appId, string apiKey, string userId);
+        private static extern void crossDKConfigWithAppId(string appId, string apiKey, string userId, string deviceId);
 
         [DllImport("__Internal")]
         private static extern void dismissOverlay();
@@ -33,12 +33,12 @@ namespace CrossDK
 
         /* Public interface for use inside C# code */
 
-        public static void CrossDKConfigWithAppId(string appId = "", string apiKey = "", string userId = "")
+        public static void CrossDKConfigWithAppId(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
 #if UNITY_EDITOR
             Debug.Log("CrossDKConfigWithAppId called in editor");
 #elif UNITY_IOS
-            crossDKConfigWithAppId(appId, apiKey, userId);
+            crossDKConfigWithAppId(appId, apiKey, userId, deviceId);
 #endif
 #if UNITY_ANDROID
             crossDKWrapper = new AndroidJavaObject("com.adikteev.unityadapter.CrossDKBridge");
