@@ -45,4 +45,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _appId: 
   _apiKey: 
-  _idfv: 
+  _userId:
+  _deviceId: 
