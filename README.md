@@ -107,6 +107,26 @@ public class CrossDKSample : MonoBehaviour
 }
 ```
 
+A `SetDeviceId()` method is available in order to use custom device id. You can see the recommendations using another device id than yours. Set it before `DisplayOverlayWithFormat()` function call:
+
+```csharp
+CrossDKSingleton.SetDeviceId(string deviceId)
+```
+
+```csharp
+using UnityEngine;
+using CrossDK;
+
+public class CrossDKSample : MonoBehaviour
+{
+    public void DisplayMidSizeOverlayExample()
+    {
+        CrossDKSingleton.SetDeviceId("My custom device ID");
+        CrossDKSingleton.DisplayOverlay(...);
+    }
+}
+```
+
 A `DismissOverlay()` method is available in order to prevent screen changes:
 
 ```csharp
