@@ -61,6 +61,15 @@ void crossDKConfigWithAppId(const char *appId, const char *apiKey, const char *u
     ];
 }
 
+/// Set the device ID.
+///
+/// - Parameters:
+///     - deviceId: current device ID
+void setDeviceId(const char* deviceId) {
+    NSString *nsDeviceId = makeNSString(deviceId);
+    CrossDKConfig.shared.deviceId = nsDeviceId;
+}
+
 /// Displays an Overlay view.
 ///
 /// - Parameters:

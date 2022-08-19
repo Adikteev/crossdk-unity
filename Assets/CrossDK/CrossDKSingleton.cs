@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 
 namespace CrossDK
 {
@@ -23,7 +25,7 @@ namespace CrossDK
         [SerializeField] private bool _autoCallConfig;
         [SerializeField] private string _appId;
         [SerializeField] private string _apiKey;
-        [SerializeField] private string _idfv;
+        [SerializeField] private string _userId;
 
         private void Awake()
         {
@@ -37,7 +39,7 @@ namespace CrossDK
 
             if (_autoCallConfig)
             {
-                Config(_appId, _apiKey, _idfv);
+                Config(_appId, _apiKey, _userId);
             }
         }
 
@@ -46,6 +48,11 @@ namespace CrossDK
         public static void Config(string appId = "", string apiKey = "", string userId = "")
         {
             CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId);
+        }
+
+        public static void SetDeviceId(string deviceId)
+        {
+            CrossDKConverter.SetDeviceId(deviceId);
         }
 
         public static void DismissOverlay()

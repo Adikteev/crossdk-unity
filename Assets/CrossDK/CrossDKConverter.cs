@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -12,6 +13,9 @@ namespace CrossDK
         private static extern void crossDKConfigWithAppId(string appId, string apiKey, string userId);
 
         [DllImport("__Internal")]
+        private static extern void setDeviceId(string deviceId);
+
+        [DllImport("__Internal")]
         private static extern void dismissOverlay();
 
         [DllImport("__Internal")]
@@ -21,14 +25,6 @@ namespace CrossDK
         private const string CONFIG = "config";
         private const string DISMISS = "dismissOverlay";
         private const string DISPLAY = "displayOverlay";
-        //[DllImport("CrossDK")]
-        //private static extern void crossDKConfigWithAppId(string appId, string apiKey, string userId);
-
-        //[DllImport("CrossDK")]
-        //private static extern void dismissOverlay();
-
-        //[DllImport("CrossDK")]
-        //private static extern void displayOverlayWithFormat(int format, int position, bool withCloseButton, bool isRewarded);
 #endif
 
         /* Public interface for use inside C# code */
@@ -49,6 +45,18 @@ namespace CrossDK
             parameters[2] = userId;
 
             crossDKWrapper.Call(CONFIG, parameters);
+#endif
+        }
+
+        public static void SetDeviceId(string deviceId)
+        {
+#if UNITY_EDITOR
+            Debug.Log("SetDeviceId called in editor");
+#elif UNITY_IOS
+            setDeviceId(deviceId);
+#endif
+#if UNITY_ANDROID
+            // Not available yet
 #endif
         }
 
