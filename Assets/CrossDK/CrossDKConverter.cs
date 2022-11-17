@@ -29,7 +29,7 @@ namespace CrossDK
 
         /* Public interface for use inside C# code */
 
-        public static void CrossDKConfigWithAppId(string appId = "", string apiKey = "", string userId = "")
+        public static void CrossDKConfigWithAppId(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
 #if UNITY_EDITOR
             Debug.Log("CrossDKConfigWithAppId called in editor");
@@ -39,10 +39,11 @@ namespace CrossDK
 #if UNITY_ANDROID
             crossDKWrapper = new AndroidJavaObject("com.adikteev.unityadapter.CrossDKBridge");
 
-            object[] parameters = new object[3];
+            object[] parameters = new object[4];
             parameters[0] = appId;
             parameters[1] = apiKey;
             parameters[2] = userId;
+            parameters[3] = deviceId;
 
             crossDKWrapper.Call(CONFIG, parameters);
 #endif
