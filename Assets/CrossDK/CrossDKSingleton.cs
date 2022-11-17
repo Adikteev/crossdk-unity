@@ -45,9 +45,9 @@ namespace CrossDK
 
         #region CrossDK Methods
 
-        public static void Config(string appId = "", string apiKey = "", string userId = "")
+        public static void Config(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
-            CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId);
+            CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId, deviceId);
         }
 
         public static void SetDeviceId(string deviceId)
