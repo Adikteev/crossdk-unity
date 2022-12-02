@@ -55,7 +55,7 @@ All the methods you'll need to call are in the `CrossDKSingleton` script on this
 In order to display an overlay properly, CrossDK requires some information. Since CrossDK won't work without these, you should set them up as soon as possible. In the following example, we use the setup function inside a `Start` event, but it's up to you to set it up wherever you like:
 
 ```csharp
-CrossDKSingleton.CrossDKConfigWithAppId(string appId, string apiKey, string userId)
+CrossDKSingleton.CrossDKConfigWithAppId(string appId, string apiKey, string userId, string deviceId)
 ```
 
 ```csharp
@@ -69,7 +69,8 @@ public class CrossDKSample : MonoBehaviour
         CrossDKSingleton.Config(
             <YOUR APP ID>,
             <YOUR API KEY>,
-            <USER ID (optional)>);
+            <USER ID (optional)>,
+            <DEVICE ID (optional)>);
     }
 }
 ```
@@ -81,10 +82,9 @@ Note: The CrossDK prefab is not destroyed during scenes changes, so you only nee
 ## Usage
 
 Here are the configurations for each overlay format :
-
 - `OverlayFormat.Banner`: settle its position between `OverlayPosition.Bottom` or `OverlayPosition.BottomRaised`, with or without a close button (the close button is Android only).
 - `OverlayFormat.MidSize`: settle its position between `OverlayPosition.Bottom` or `OverlayPosition.BottomRaised`, with or without a close button.
-- `OverlayFormat.Interstitial`: settle it with or without a close button, with or without a rewarded (the reward is iOS only at the moment).
+- `OverlayFormat.Interstitial`: settle it with or without a close button, with or without a rewarded.
 
 ```csharp
 CrossDKSingleton.DisplayOverlayWithFormat(OverlayFormat format, OverlayPosition position, bool withCloseButton, bool isRewarded)
@@ -99,15 +99,15 @@ public class CrossDKSample : MonoBehaviour
     public void DisplayMidSizeOverlayExample()
     {
         CrossDKSingleton.DisplayOverlay(
-            OverlayFormat.MidSize,
-            OverlayPosition.Bottom,
-            true,
+            OverlayFormat.MidSize, 
+            OverlayPosition.Bottom, 
+            true, 
             false);
     }
 }
 ```
 
-A `SetDeviceId()` method is available in order to use custom device id. You can see the recommendations using another device id than yours. Set it before `DisplayOverlayWithFormat()` function call:
+For IOS only a `SetDeviceId()` method is available in order to use custom device id. You can see the recommendations using another device id than yours. Set it before `DisplayOverlayWithFormat()` function call:
 
 ```csharp
 CrossDKSingleton.SetDeviceId(string deviceId)
@@ -126,6 +126,7 @@ public class CrossDKSample : MonoBehaviour
     }
 }
 ```
+For Android you can directly config the sdk with the desired device ID.
 
 A `DismissOverlay()` method is available in order to prevent screen changes:
 
@@ -151,7 +152,6 @@ public class CrossDKSample : MonoBehaviour
 Additionally, many delegates are available if you want to monitor what is happening with the `CrossDKOverlay`:
 
 For instance, you can track when the user is rewarded with the delegate:
-
 ```csharp
 CrossDKSingleton.overlayDidRewardUserWithRewardDelegate
 ```
@@ -178,7 +178,6 @@ public class CrossDKDelegatesSample : MonoBehaviour
     }
 }
 ```
-
-You can check the [crossdk-ios](https://github.com/Adikteev/crossdk-ios) and the [crossdk-android](https://github.com/Adikteev/crossdk-android) repositories to know more about the available delegates for each platform.
+You can check the [crossdk-ios](https://github.com/Adikteev/crossdk-ios) and the [crossdk-android](https://github.com/Adikteev/crossdk-android) repositories to know more about the available delegate for each platforms.
 
 That’s all you need to know!
