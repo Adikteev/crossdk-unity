@@ -24,6 +24,7 @@ namespace CrossDK
         private static AndroidJavaObject crossDKWrapper;
         private const string CONFIG = "config";
         private const string DISMISS = "dismissOverlay";
+        private const string LOAD = "loadOverlay";
         private const string DISPLAY = "displayOverlay";
 #endif
 
@@ -70,6 +71,24 @@ namespace CrossDK
 #endif
 #if UNITY_ANDROID
             crossDKWrapper.Call(DISMISS);
+#endif
+        }
+
+        public static void LoadOverlayWithFormat(OverlayFormat format, OverlayPosition position, bool withCloseButton, bool isRewarded)
+        {
+#if UNITY_EDITOR
+            Debug.Log("DisplayOverlayWithFormat called in editor");
+#elif UNITY_IOS
+            displayOverlayWithFormat((int)format, (int)position, withCloseButton, isRewarded);
+#endif
+#if UNITY_ANDROID
+            object[] parameters = new object[4];
+            parameters[0] = (int)format;
+            parameters[1] = (int)position;
+            parameters[2] = withCloseButton;
+            parameters[3] = isRewarded;
+
+            crossDKWrapper.Call(LOAD, parameters);
 #endif
         }
 

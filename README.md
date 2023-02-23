@@ -20,7 +20,7 @@ The Android version is using **Kotlin 1.6.20**, **Gradle 6.1.1** and **Gradle pl
 
 ## Installation
 
-### iOS using CocoaPods
+### iOS using CocoaPods 
 
 To install CocoaPods on MacOS, add the following entry:
 
@@ -28,9 +28,9 @@ To install CocoaPods on MacOS, add the following entry:
 $ sudo gem install cocoapods
 ```
 
-The CrossDK pod is automatically installed in the Xcode project when building with Unity, thanks to [External Dependency Manager for Unity](https://github.com/googlesamples/unity-jar-resolver).
+The CrossDK pod is automatically installed in the Xcode project when building with Unity, thanks to [External Dependency Manager for Unity](https://github.com/googlesamples/unity-jar-resolver). 
 
-If you already use CocoaPods in your Unity project, you should consider adding your pods with [EDM4U](https://github.com/googlesamples/unity-jar-resolver) as well.
+If you already use CocoaPods in your Unity project, you should consider adding your pods with [EDM4U](https://github.com/googlesamples/unity-jar-resolver) as well. 
 
 ### Android using Github Packages
 
@@ -41,7 +41,7 @@ If you already use CocoaPods in your Unity project, you should consider adding y
 
 ## Configuration
 
-To use CrossDK in your Unity project, you must download the `CrossDK.unitypackage` on the [releases page](https://github.com/Adikteev/crossdk-unity/releases), then import it into your project. Once it's finished, you can drag the **CrossDK prefab** (located in `Assets\CrossDK\CrossDK`) into your scene or setup the config in script.
+To use CrossDK in your Unity project, you must download the `CrossDK.unitypackage` on the [releases page](https://github.com/Adikteev/crossdk-unity-ios/releases), then import it into your project. Once it's finished, drag the **CrossDK prefab** (located in `Assets\CrossDK\CrossDK`) into your scene. 
 
 ### Android specific configuration
 
@@ -81,7 +81,7 @@ Note: The CrossDK prefab is not destroyed during scenes changes, so you only nee
 
 ## Usage
 
-Here are the configurations for each overlay format :
+Here are the configurations for each overlay format :  
 - `OverlayFormat.Banner`: settle its position between `OverlayPosition.Bottom` or `OverlayPosition.BottomRaised`, with or without a close button (the close button is Android only).
 - `OverlayFormat.MidSize`: settle its position between `OverlayPosition.Bottom` or `OverlayPosition.BottomRaised`, with or without a close button.
 - `OverlayFormat.Interstitial`: settle it with or without a close button, with or without a rewarded.
@@ -107,27 +107,6 @@ public class CrossDKSample : MonoBehaviour
 }
 ```
 
-For IOS only a `SetDeviceId()` method is available in order to use custom device id. You can see the recommendations using another device id than yours. Set it before `DisplayOverlayWithFormat()` function call:
-
-```csharp
-CrossDKSingleton.SetDeviceId(string deviceId)
-```
-
-```csharp
-using UnityEngine;
-using CrossDK;
-
-public class CrossDKSample : MonoBehaviour
-{
-    public void DisplayMidSizeOverlayExample()
-    {
-        CrossDKSingleton.SetDeviceId("My custom device ID");
-        CrossDKSingleton.DisplayOverlay(...);
-    }
-}
-```
-For Android you can directly config the sdk with the desired device ID.
-
 A `DismissOverlay()` method is available in order to prevent screen changes:
 
 ```csharp
@@ -146,6 +125,36 @@ public class CrossDKSample : MonoBehaviour
     }
 }
 ```
+
+## Preload
+
+You can preload overlays before displaying it on screen, this feature is particularly useful on mid size and interstitial format which contain video asset that may take time to load:
+
+```csharp
+using UnityEngine;
+using CrossDK;
+
+public class CrossDKSample : MonoBehaviour
+{
+    public void DisplayMidSizeOverlayExample()
+    {
+        CrossDKSingleton.LoadOverlay(
+            OverlayFormat.MidSize, 
+            OverlayPosition.Bottom, 
+            true, 
+            false);
+    }
+}
+```
+Make sure to leave enough time for the assets to load fully
+A preloaded overlay becomes expired after '30 minutes' of its load, when this delay expires you can no longer show it on screen.
+To monitor the preload action you can use these delagates:
+
+- `CrossDKSingleton.overlayWillStartPreloadDelegate`: called when the preload starts
+- `CrossDKSingleton.overlayDidFinishPreloadDelegate`: called when the preload finishes
+- `CrossDKSingleton.overlayPreloadExpiredDelegate`: called when the preload expires
+
+Please not that when displaying a not fully loaded mid size or interstitial you will only see a banner because of the video not being fully prepared.
 
 ## Overlay Delegate
 
