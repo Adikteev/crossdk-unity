@@ -9,6 +9,9 @@ namespace CrossDK
         private static CrossDKSingleton _instance;
 
         public delegate void CrossDKDelegate(string message);
+        public static CrossDKDelegate overlayWillStartPreloadDelegate;
+        public static CrossDKDelegate overlayDidFinishPreloadDelegate;
+        public static CrossDKDelegate overlayPreloadExpiredDelegate;
         public static CrossDKDelegate overlayWillStartPresentationDelegate;
         public static CrossDKDelegate overlayDidFinishPresentationDelegate;
         public static CrossDKDelegate overlayWillStartDismissalDelegate;
@@ -60,6 +63,11 @@ namespace CrossDK
             CrossDKConverter.DismissOverlay();
         }
 
+        public static void LoadOverlay(OverlayFormat format = OverlayFormat.Interstitial, OverlayPosition position = OverlayPosition.Bottom, bool withCloseButton = true, bool isRewarded = true)
+        {
+            CrossDKConverter.LoadOverlayWithFormat(format, position, withCloseButton, isRewarded);
+        }
+
         public static void DisplayOverlay(OverlayFormat format = OverlayFormat.Interstitial, OverlayPosition position = OverlayPosition.Bottom, bool withCloseButton = true, bool isRewarded = true)
         {
             CrossDKConverter.DisplayOverlayWithFormat(format, position, withCloseButton, isRewarded);
@@ -73,6 +81,21 @@ namespace CrossDK
         //{
         //    Logger.Log(message);
         //}
+
+        internal void OverlayWillStartPreload(string message)
+        {
+            overlayWillStartPreloadDelegate?.Invoke(message);
+        }
+
+        internal void OverlayDidFinishPreload(string message)
+        {
+            overlayDidFinishPreloadDelegate?.Invoke(message);
+        }
+
+        internal void OverlayPreloadExpired(string message)
+        {
+            overlayPreloadExpiredDelegate?.Invoke(message);
+        }
 
         internal void OverlayWillStartPresentation(string message)
         {

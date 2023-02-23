@@ -24,15 +24,15 @@ import com.unity3d.player.UnityPlayer
 public class CrossDKBridge {
     private var mUnityPlayerActivity: Activity = UnityPlayer.currentActivity
     private var mOpenedOverlayFormat: OverlayFormat = OverlayFormat.NONE
-    private lateinit var mCrossDKView: CrossDKView
-    private lateinit var mCrossDKMidSizeView: CrossDKMidSizeView
-    private lateinit var mCrossDKInterstitialView: CrossDKInterstitialView
+    private var mCrossDKView: CrossDKView? = null
+    private var mCrossDKMidSizeView: CrossDKMidSizeView? = null
+    private var mCrossDKInterstitialView: CrossDKInterstitialView? = null
 
     ///////////////////////////////////////////////////////////////////////////
     // CONFIG
     ///////////////////////////////////////////////////////////////////////////
 
-    public fun config(appId: String, apiKey: String, userId: String?, deviceId:String?) {
+    public fun config(appId: String, apiKey: String, userId: String?, deviceId: String?) {
         CrossDKConfig.Builder()
             .apiKey(apiKey)
             .appId(appId)
@@ -50,83 +50,52 @@ public class CrossDKBridge {
     // DISPLAY
     ///////////////////////////////////////////////////////////////////////////
 
+    public fun loadOverlay(
+        format: Int,
+        position: Int,
+        isCloseButtonVisible: Boolean,
+        isRewarded: Boolean
+    ) {
+        mUnityPlayerActivity.runOnUiThread {
+            overlayWillStartPreload()
+            mOpenedOverlayFormat = OverlayFormat.fromInt(format)
+            createFormat(position, isCloseButtonVisible, isRewarded)
+            when (mOpenedOverlayFormat) {
+                OverlayFormat.BANNER -> {
+                    mCrossDKView?.load(getCrossDKLoadCallback())
+                }
+                OverlayFormat.MID_SIZE -> {
+                    mCrossDKMidSizeView?.load(getCrossDKLoadCallback())
+                }
+                OverlayFormat.INTERSTITIAL -> {
+                    mCrossDKInterstitialView?.load(getCrossDKLoadCallback())
+                }
+                else -> {
+                    unitySendOverlayError("Overlay error: unsupported format requested")
+                }
+            }
+        }
+    }
+
     public fun displayOverlay(
         format: Int,
         position: Int,
         isCloseButtonVisible: Boolean,
         isRewarded: Boolean
     ) {
-        val crossDKContentCallback = object : CrossDKContentCallback {
-            override fun onConfigurationError() {
-                unitySendOverlayError("Overlay error: configuration error")
-            }
-
-            override fun onNoRecommendation() {
-                unitySendOverlayError("Overlay error: unavailable recommendation")
-            }
-
-            override fun onShowContentError() {
-                unitySendOverlayError("Overlay error: show content error")
-            }
-
-            override fun onRecommendationDisplayed() {
-                overlayDidFinishPresentation()
-            }
-
-            override fun onRecommendationClicked() {
-                overlayShowsRecommendedAppInAppStore()
-            }
-
-            override fun onRecommendationClosed() {
-                overlayDidFinishDismissal()
-                destroyViews()
-            }
-
-            override fun onUnsupportedApiVersion() {
-                unitySendOverlayError("Overlay error: unsupported Api version")
-            }
-        }
+        overlayWillStartPresentation()
         mUnityPlayerActivity.runOnUiThread {
-            if (mOpenedOverlayFormat != OverlayFormat.NONE) dismissOverlay()
-            val overlayFormat = OverlayFormat.fromInt(format)
-            mOpenedOverlayFormat = overlayFormat
-            overlayWillStartPresentation()
-            when (overlayFormat) {
+            mOpenedOverlayFormat = OverlayFormat.fromInt(format)
+            createFormat(position, isCloseButtonVisible, isRewarded)
+            when (mOpenedOverlayFormat) {
                 OverlayFormat.BANNER -> {
-                    mCrossDKView = CrossDKView(mUnityPlayerActivity)
-                    mCrossDKView.setCrossDKContentCallback(crossDKContentCallback)
-                    mCrossDKView.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
-                    mUnityPlayerActivity.addContentView(mCrossDKView, getLayoutParams())
-                    mCrossDKView.setPosition(if (position == 0) CrossDKPosition.BOTTOM else CrossDKPosition.BOTTOM_RAISED)
+                    mCrossDKView?.show()
                 }
                 OverlayFormat.MID_SIZE -> {
-                    mCrossDKMidSizeView = CrossDKMidSizeView(mUnityPlayerActivity)
-                    mCrossDKMidSizeView.setCrossDKContentCallback(crossDKContentCallback)
-                    mCrossDKMidSizeView.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
-                    mUnityPlayerActivity.addContentView(mCrossDKMidSizeView, getLayoutParams())
-                    mCrossDKMidSizeView.setPosition(if (position == 0) CrossDKPosition.BOTTOM else CrossDKPosition.BOTTOM_RAISED)
+                    mCrossDKMidSizeView?.show()
                 }
                 OverlayFormat.INTERSTITIAL -> {
-                    mCrossDKInterstitialView = CrossDKInterstitialView(mUnityPlayerActivity)
-                    mCrossDKInterstitialView.setCrossDKContentCallback(crossDKContentCallback)
-                    mCrossDKInterstitialView.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
-                    mCrossDKInterstitialView.setRewarded(isRewarded,
-                        object : CrossDKRewardedCallback {
-                            override fun onUserRewarded() {
-                                overlayDidFinishPlayingVideo()
-                                overlayDidRewardUserWithReward()
-                            }
-                        })
-                    mUnityPlayerActivity.addContentView(mCrossDKInterstitialView, getLayoutParams())
-                    mCrossDKInterstitialView.load(object : CrossDKLoadCallback {
-                        override fun onRecommendationLoaded() {
-                            mCrossDKInterstitialView.show()
-                        }
-
-                        override fun onRecommendationLoadFailure() {
-                            overlayDidFailToLoadWithError(java.lang.Exception("Recommendation load failure"))
-                        }
-                    })
+                    mCrossDKInterstitialView?.show()
                 }
                 else -> {
                     unitySendOverlayError("Overlay error: unsupported format requested")
@@ -140,18 +109,18 @@ public class CrossDKBridge {
         mUnityPlayerActivity.runOnUiThread {
             when (mOpenedOverlayFormat) {
                 OverlayFormat.BANNER -> {
-                    mCrossDKView.dismissView(true)
+                    mCrossDKView?.dismissView(true)
                     destroyViews()
                 }
                 OverlayFormat.MID_SIZE -> {
-                    mCrossDKMidSizeView.dismissView(true)
+                    mCrossDKMidSizeView?.dismissView(true)
                     destroyViews()
                 }
                 OverlayFormat.INTERSTITIAL -> {
-                    mCrossDKInterstitialView.dismissView(true)
+                    mCrossDKInterstitialView?.dismissView(true)
                     destroyViews()
                 }
-                else -> {}
+                OverlayFormat.NONE -> overlayDidFinishDismissal()
             }
         }
     }
@@ -160,27 +129,30 @@ public class CrossDKBridge {
         mUnityPlayerActivity.runOnUiThread {
             when (mOpenedOverlayFormat) {
                 OverlayFormat.BANNER -> {
-                    mCrossDKView.destroy()
-                    val parentView = mCrossDKView.parent
+                    mCrossDKView?.destroy()
+                    val parentView = mCrossDKView?.parent
                     if (parentView is ViewGroup) {
                         parentView.removeView(mCrossDKView)
                     }
+                    mCrossDKView = null
                 }
                 OverlayFormat.MID_SIZE -> {
-                    mCrossDKMidSizeView.destroy()
-                    val parentView = mCrossDKMidSizeView.parent
+                    mCrossDKMidSizeView?.destroy()
+                    val parentView = mCrossDKMidSizeView?.parent
                     if (parentView is ViewGroup) {
                         parentView.removeView(mCrossDKMidSizeView)
                     }
+                    mCrossDKMidSizeView = null
                 }
                 OverlayFormat.INTERSTITIAL -> {
-                    mCrossDKInterstitialView.destroy()
-                    val parentView = mCrossDKInterstitialView.parent
+                    mCrossDKInterstitialView?.destroy()
+                    val parentView = mCrossDKInterstitialView?.parent
                     if (parentView is ViewGroup) {
                         parentView.removeView(mCrossDKInterstitialView)
                     }
+                    mCrossDKInterstitialView = null
                 }
-                else -> {}
+                else -> mOpenedOverlayFormat = OverlayFormat.NONE
             }
             mOpenedOverlayFormat = OverlayFormat.NONE
         }
@@ -189,6 +161,18 @@ public class CrossDKBridge {
     ///////////////////////////////////////////////////////////////////////////
     // LISTENERS
     ///////////////////////////////////////////////////////////////////////////
+
+    private fun overlayWillStartPreload() {
+        unitySendMessage("OverlayWillStartPreload", "Overlay will start preload");
+    }
+
+    private fun overlayDidFinishedPreload() {
+        unitySendMessage("OverlayDidFinishPreload", "Overlay did finish preload");
+    }
+
+    private fun overlayPreloadExpired() {
+        unitySendMessage("OverlayPreloadExpired", "Overlay preload expired");
+    }
 
     private fun overlayWillStartPresentation() {
         unitySendMessage("OverlayWillStartPresentation", "Overlay will start presentation");
@@ -240,6 +224,42 @@ public class CrossDKBridge {
     // HELPERS
     ///////////////////////////////////////////////////////////////////////////
 
+    private fun createFormat(
+        position: Int,
+        isCloseButtonVisible: Boolean,
+        isRewarded: Boolean
+    ) {
+        when {
+            mOpenedOverlayFormat == OverlayFormat.BANNER && mCrossDKView == null -> {
+                mCrossDKView = CrossDKView(mUnityPlayerActivity)
+                mCrossDKView?.setCrossDKContentCallback(getCrossDKContentCallback())
+                mCrossDKView?.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
+                mUnityPlayerActivity.addContentView(mCrossDKView, getLayoutParams())
+                mCrossDKView?.setPosition(if (position == 0) CrossDKPosition.BOTTOM else CrossDKPosition.BOTTOM_RAISED)
+            }
+            mOpenedOverlayFormat == OverlayFormat.MID_SIZE && mCrossDKMidSizeView == null -> {
+                mCrossDKMidSizeView = CrossDKMidSizeView(mUnityPlayerActivity)
+                mCrossDKMidSizeView?.setCrossDKContentCallback(getCrossDKContentCallback())
+                mCrossDKMidSizeView?.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
+                mUnityPlayerActivity.addContentView(mCrossDKMidSizeView, getLayoutParams())
+                mCrossDKMidSizeView?.setPosition(if (position == 0) CrossDKPosition.BOTTOM else CrossDKPosition.BOTTOM_RAISED)
+            }
+            mOpenedOverlayFormat == OverlayFormat.INTERSTITIAL && mCrossDKInterstitialView == null -> {
+                mCrossDKInterstitialView = CrossDKInterstitialView(mUnityPlayerActivity)
+                mCrossDKInterstitialView?.setCrossDKContentCallback(getCrossDKContentCallback())
+                mCrossDKInterstitialView?.setCloseButtonVisibility(if (isCloseButtonVisible) View.VISIBLE else View.INVISIBLE)
+                mCrossDKInterstitialView?.setRewarded(isRewarded,
+                    object : CrossDKRewardedCallback {
+                        override fun onUserRewarded() {
+                            overlayDidFinishPlayingVideo()
+                            overlayDidRewardUserWithReward()
+                        }
+                    })
+                mUnityPlayerActivity.addContentView(mCrossDKInterstitialView, getLayoutParams())
+            }
+        }
+    }
+
     private fun getLayoutParams(): FrameLayout.LayoutParams {
         val adParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT
@@ -264,6 +284,54 @@ public class CrossDKBridge {
 
         companion object {
             fun fromInt(value: Int) = values().first { it.value == value }
+        }
+    }
+
+    private fun getCrossDKLoadCallback() = object : CrossDKLoadCallback {
+        override fun onRecommendationLoaded() {
+            overlayDidFinishedPreload()
+        }
+
+        override fun onRecommendationLoadFailure() {
+            overlayDidFailToLoadWithError(java.lang.Exception("Recommendation load failure"))
+            destroyViews()
+        }
+
+        override fun onRecommendationExpired() {
+            overlayPreloadExpired()
+            destroyViews()
+        }
+    }
+
+    private fun getCrossDKContentCallback() = object : CrossDKContentCallback {
+        override fun onConfigurationError() {
+            unitySendOverlayError("Overlay error: configuration error")
+        }
+
+        override fun onNoRecommendation() {
+            unitySendOverlayError("Overlay error: unavailable recommendation")
+            destroyViews()
+        }
+
+        override fun onShowContentError() {
+            unitySendOverlayError("Overlay error: show content error")
+        }
+
+        override fun onRecommendationDisplayed() {
+            overlayDidFinishPresentation()
+        }
+
+        override fun onRecommendationClicked() {
+            overlayShowsRecommendedAppInAppStore()
+        }
+
+        override fun onRecommendationClosed() {
+            overlayDidFinishDismissal()
+            destroyViews()
+        }
+
+        override fun onUnsupportedApiVersion() {
+            unitySendOverlayError("Overlay error: unsupported Api version")
         }
     }
 }
