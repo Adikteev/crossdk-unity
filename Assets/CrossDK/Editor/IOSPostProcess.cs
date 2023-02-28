@@ -18,6 +18,7 @@ public static class IOSPostProcess
             project.SetBuildProperty(project.ProjectGuid(), "CLANG_ENABLE_MODULES", "YES");
             project.SetBuildProperty(project.ProjectGuid(), "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER", "YES");
             project.SetBuildProperty(project.ProjectGuid(), "ALWAYS_SEARCH_USER_PATHS", "NO");
+            project.SetBuildProperty(project.ProjectGuid(), "ENABLE_BITCODE", "NO");
 
             project.WriteToFile(pbxProjectPath);
 #elif UNITY_ANDROID  

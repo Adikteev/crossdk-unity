@@ -20,6 +20,9 @@ namespace CrossDK
 
         [DllImport("__Internal")]
         private static extern void displayOverlayWithFormat(int format, int position, bool withCloseButton, bool isRewarded);
+
+        [DllImport("__Internal")]
+        private static extern void loadOverlayWithFormat(int format, int position, bool withCloseButton, bool isRewarded);
 #elif UNITY_ANDROID       
         private static AndroidJavaObject crossDKWrapper;
         private const string CONFIG = "config";
@@ -79,7 +82,7 @@ namespace CrossDK
 #if UNITY_EDITOR
             Debug.Log("DisplayOverlayWithFormat called in editor");
 #elif UNITY_IOS
-            displayOverlayWithFormat((int)format, (int)position, withCloseButton, isRewarded);
+            loadOverlayWithFormat((int)format, (int)position, withCloseButton, isRewarded);
 #endif
 #if UNITY_ANDROID
             object[] parameters = new object[4];
