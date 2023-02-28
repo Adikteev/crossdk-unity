@@ -34,7 +34,7 @@
          * "subspecs" (optional)
            Subspecs to include for the pod.
      -->
-    <iosPod name="CrossDK" version="3.3.2" addToAllTargets="true">
+    <iosPod name="CrossDK" version="4.0.1" addToAllTargets="true">
       <sources>
 		  <source>https://github.com/CocoaPods/Specs</source>
       </sources>

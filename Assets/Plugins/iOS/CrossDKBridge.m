@@ -19,6 +19,7 @@
 
 @implementation CrossDKBridge
 
+
 NSString* makeNSString (const char* string) {
     if (string) {
         return [NSString stringWithUTF8String: string];
@@ -39,7 +40,6 @@ char* makeCString(NSString *str) {
 }
 
 void unitySendMessage(const char *method, NSString *message) {
-    NSLog(@"%@", message);
     UnitySendMessage("CrossDK", method, makeCString(message));
 }
 
@@ -61,6 +61,9 @@ void crossDKConfigWithAppId(const char *appId, const char *apiKey, const char *u
     ];
 }
 
+
+
+
 /// Set the device ID.
 ///
 /// - Parameters:
@@ -77,7 +80,32 @@ void setDeviceId(const char* deviceId) {
 ///     - position: banner and mid_size overlay position
 ///     - withCloseButton: mid_size and interstitial overlay close button
 ///     - isRewarded: provides some kind of value for the user (interstitial format only)
- - (void) displayOverlayWithFormat:(OverlayFormat)isFormat position:(OverlayPosition)isPosition withCloseButton:(BOOL*)isWithCloseButton isRewarded:(BOOL*)isIsRewarded {
+- (void) displayOverlayWithFormat:(OverlayFormat)isFormat position:(OverlayPosition)isPosition withCloseButton:(BOOL*)isWithCloseButton isRewarded:(BOOL*)isIsRewarded {
+    
+    _crossDKOverlay = [[CrossDKOverlay alloc] init];
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    self.crossDKOverlayDelegate = [[CrossDKOverlayDelegate alloc] initWithParentBridge: self];
+    self.crossDKOverlay.delegate = self.crossDKOverlayDelegate;
+    if (window != nil) {
+        [
+            self.crossDKOverlay
+            displayWithWindow:window
+            format:isFormat
+            position:isPosition
+            withCloseButton:isWithCloseButton
+            isRewarded:isIsRewarded
+        ];
+    }
+}
+
+ /// Load an Overlay view.
+///
+/// - Parameters:
+///     - format: banner, mid_size, interstitial overlay
+///     - position: banner and mid_size overlay position
+///     - withCloseButton: mid_size and interstitial overlay close button
+///     - isRewarded: provides some kind of value for the user (interstitial format only)
+ - (void) loadOverlayWithFormat:(OverlayFormat)isFormat position:(OverlayPosition)isPosition withCloseButton:(BOOL*)isWithCloseButton isRewarded:(BOOL*)isIsRewarded {
      _crossDKOverlay = [[CrossDKOverlay alloc] init];
      UIWindow *window = [[UIApplication sharedApplication] keyWindow];
      self.crossDKOverlayDelegate = [[CrossDKOverlayDelegate alloc] initWithParentBridge: self];
@@ -86,12 +114,13 @@ void setDeviceId(const char* deviceId) {
      if (window != nil) {
          [
              self.crossDKOverlay
-             displayWithWindow:window
+             loadWithWindow:window
              format:isFormat
              position:isPosition
              withCloseButton:isWithCloseButton
              isRewarded:isIsRewarded
          ];
+         unitySendMessage("OverlayWillStartPreload", @"Overlay will start preload");
      }
  }
 
@@ -129,8 +158,21 @@ void dismissOverlay() {
  void displayOverlayWithFormat(OverlayFormat format, OverlayPosition position, BOOL* withCloseButton, BOOL* isRewarded) {
      if (delegateObject == nil)
          delegateObject = [[CrossDKBridge alloc] init];
-
      [delegateObject displayOverlayWithFormat:format position:position withCloseButton:withCloseButton isRewarded:isRewarded];
+ }
+
+ /// Preload feature before display.
+///
+/// - Parameters:
+///     - format: banner, mid_size, interstitial overlay
+///     - position: banner and mid_size overlay position
+///     - withCloseButton: mid_size and interstitial overlay close button
+///     - isRewarded: provides some kind of value for the user (interstitial format only)
+ void loadOverlayWithFormat(OverlayFormat format, OverlayPosition position, BOOL* withCloseButton, BOOL* isRewarded) {
+     if (delegateObject == nil)
+         delegateObject = [[CrossDKBridge alloc] init];
+
+     [delegateObject loadOverlayWithFormat:format position:position withCloseButton:withCloseButton isRewarded:isRewarded];
  }
 
 @implementation CrossDKOverlayDelegate
@@ -200,4 +242,17 @@ void dismissOverlay() {
     }
 }
 
+-(void)overlayDidPreload {
+    unitySendMessage("OverlayDidFinishPreload", @"Overlay did finish preload");
+}
+
+-(void)overlayPreloadFailure {
+    unitySendMessage("OverlayDidFailToLoadWithError", @"Overlay did fail to load with error");
+}
+
+-(void)overlayPreloadExpired {
+    unitySendMessage("OverlayPreloadExpired", @"Overlay preload expired");
+}
 @end
+
+

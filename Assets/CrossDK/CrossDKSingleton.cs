@@ -151,7 +151,7 @@ namespace CrossDK
         {
             overlayUnavailableWithErrorDelegate?.Invoke(message);
         }
-
+        
         #endregion
     }
 
