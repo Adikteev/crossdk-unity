@@ -48,6 +48,11 @@ namespace CrossDK
 
         #region CrossDK Methods
 
+        public static void SetDebugMode(DebugLevel level = DebugLevel.None)
+        {
+            CrossDKConverter.SetDebugMode(level);
+        }
+
         public static void Config(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
             CrossDKConverter.CrossDKConfigWithAppId(appId, apiKey, userId, deviceId);
@@ -71,6 +76,7 @@ namespace CrossDK
         public static void DisplayOverlay(OverlayFormat format = OverlayFormat.Interstitial, OverlayPosition position = OverlayPosition.Bottom, bool withCloseButton = true, bool isRewarded = true)
         {
             CrossDKConverter.DisplayOverlayWithFormat(format, position, withCloseButton, isRewarded);
+            dismissKeyboard();
         }
 
         #endregion
@@ -151,8 +157,19 @@ namespace CrossDK
         {
             overlayUnavailableWithErrorDelegate?.Invoke(message);
         }
-        
+
         #endregion
+
+        // Dismiss keyboard if shown on screen
+
+        private static void dismissKeyboard()
+        {
+            if (TouchScreenKeyboard.visible == true)
+            {
+                TouchScreenKeyboard keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
+                keyboard.active = false;
+            }
+        }
     }
 
     public enum OverlayFormat
@@ -166,5 +183,11 @@ namespace CrossDK
     {
         Bottom = 0,
         BottomRaised = 1
+    }
+    public enum DebugLevel
+    {
+        None = 0,
+        Verbose = 1,
+        Error = 2
     }
 }
