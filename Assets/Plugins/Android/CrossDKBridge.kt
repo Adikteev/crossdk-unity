@@ -32,6 +32,14 @@ public class CrossDKBridge {
     // CONFIG
     ///////////////////////////////////////////////////////////////////////////
 
+    public fun setupDebugMode(debugLevel: Int) {
+        CrossDKConfig.Setting.logLevel = when (DebugLevel.fromInt(debugLevel)) {
+            DebugLevel.VERBOSE -> CrossDKConfig.LOG.VERBOSE
+            DebugLevel.ERROR -> CrossDKConfig.LOG.ERROR
+            else -> CrossDKConfig.LOG.NONE
+        }
+    }
+
     public fun config(appId: String, apiKey: String, userId: String?, deviceId: String?) {
         CrossDKConfig.Builder()
             .apiKey(apiKey)
@@ -105,7 +113,6 @@ public class CrossDKBridge {
     }
 
     public fun dismissOverlay() {
-        overlayWillStartDismissal()
         mUnityPlayerActivity.runOnUiThread {
             when (mOpenedOverlayFormat) {
                 OverlayFormat.BANNER -> {
@@ -287,6 +294,16 @@ public class CrossDKBridge {
         }
     }
 
+    public enum class DebugLevel(val value: Int) {
+        NONE(0),
+        VERBOSE(1),
+        ERROR(2);
+
+        companion object {
+            fun fromInt(value: Int) = values().first { it.value == value }
+        }
+    }
+
     private fun getCrossDKLoadCallback() = object : CrossDKLoadCallback {
         override fun onRecommendationLoaded() {
             overlayDidFinishedPreload()
@@ -326,6 +343,7 @@ public class CrossDKBridge {
         }
 
         override fun onRecommendationClosed() {
+            overlayWillStartDismissal()
             overlayDidFinishDismissal()
             destroyViews()
         }

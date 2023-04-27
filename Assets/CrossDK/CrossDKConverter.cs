@@ -24,14 +24,24 @@ namespace CrossDK
         [DllImport("__Internal")]
         private static extern void loadOverlayWithFormat(int format, int position, bool withCloseButton, bool isRewarded);
 #elif UNITY_ANDROID       
-        private static AndroidJavaObject crossDKWrapper;
+        private static AndroidJavaObject crossDKWrapper = new AndroidJavaObject("com.adikteev.unityadapter.CrossDKBridge");
         private const string CONFIG = "config";
+        private const string SETUPDEBUGMODE = "setupDebugMode";
         private const string DISMISS = "dismissOverlay";
         private const string LOAD = "loadOverlay";
         private const string DISPLAY = "displayOverlay";
 #endif
 
         /* Public interface for use inside C# code */
+        public static void SetDebugMode(DebugLevel level)
+        {
+#if UNITY_ANDROID
+            object[] parameters = new object[1];
+            parameters[0] = (int)level;
+            crossDKWrapper.Call(SETUPDEBUGMODE, parameters);
+#endif
+        }
+
 
         public static void CrossDKConfigWithAppId(string appId = "", string apiKey = "", string userId = "", string deviceId = "")
         {
@@ -41,8 +51,6 @@ namespace CrossDK
             crossDKConfigWithAppId(appId, apiKey, userId);
 #endif
 #if UNITY_ANDROID
-            crossDKWrapper = new AndroidJavaObject("com.adikteev.unityadapter.CrossDKBridge");
-
             object[] parameters = new object[4];
             parameters[0] = appId;
             parameters[1] = apiKey;
