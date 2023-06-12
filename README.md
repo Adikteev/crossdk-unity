@@ -16,7 +16,7 @@ CrossDK for Unity is available with iOS 11 minimal target version, but the `Cros
 
 **Android API** version **>= API 21**
 
-The Android version is using **Kotlin 1.6.20**, **Gradle 6.1.1** and **Gradle plugin 3.6.0**, it may conflict with other versions if you use some in your project.
+The Android version is using **Kotlin 1.8.0**, **Gradle 6.8.3** and **Gradle plugin 4.2.2**
 
 ## Installation
 
@@ -35,7 +35,7 @@ If you already use CocoaPods in your Unity project, you should consider adding y
 ### Android using Github Packages
 
 - You can download manually the CrossDK's release package `crossdk-android-X.X.X.aar` directly from
-  our [Github package registry page] (https://github.com/orgs/Adikteev/packages)
+    our [Github package registry page](https://github.com/Adikteev/crossdk-android/packages/1513405)
 - Place the release package inside the folder `Assets\Plugins\Android`
 - If you are using Unity 2019, you also need do delete the files `launcherTemplate.gradle` and `mainTemplate.gradle` in the folder `Assets\Plugins\Android` and to rename `launcherTemplate2019.gradle` to `launcherTemplate.gradle` and `mainTemplate2019.gradle` to `mainTemplate.gradle`.
 
@@ -45,7 +45,7 @@ To use CrossDK in your Unity project, you must download the `CrossDK.unitypackag
 
 ### Android specific configuration
 
-- To make sure you are using Gradle 6.1.1, you can open the preferences menu (Edit > Preferences > External Tools) and set the Gradle path to a folder with Gradle 6.1.1 installed (you can download it here: https://gradle.org/releases/).
+- Android sdk requires Gradle 6.8.3 or higher, you can open the preferences menu in the unity editor (Edit > Preferences > External Tools) and set the Gradle path to a folder with Gradle 6.8.3 or higher (you can download it here: https://gradle.org/releases/).
 - If you are using Unity 2019, you also need to delete the files `launcherTemplate.gradle` and `mainTemplate.gradle` in the folder `Assets\Plugins\Android` and to rename `launcherTemplate2019.gradle` to `launcherTemplate.gradle` and `mainTemplate2019.gradle` to `mainTemplate.gradle`.
 
 ### Common configuration
@@ -187,6 +187,25 @@ public class CrossDKDelegatesSample : MonoBehaviour
     }
 }
 ```
-You can check the [crossdk-ios](https://github.com/Adikteev/crossdk-ios) and the [crossdk-android](https://github.com/Adikteev/crossdk-android) repositories to know more about the available delegate for each platforms.
+## Debug
+
+You can enable logs for the cross promotion sdk by setting the log level to verbose, error or none using the following method:
+
+```csharp
+using UnityEngine;
+using CrossDK;
+
+void Awake()
+    {
+        CrossDKSingleton.SetDebugMode(DebugLevel.Verbose);
+    }
+```
+- `DebugLevel.Verbose`: for verbose logging
+- `DebugLevel.Error`: for error logging
+- `DebugLevel.None`: for disabling logger
+
+> We recommend setting up this config before initializing the SDK.
+
+You can check the [crossdk-ios](https://github.com/Adikteev/crossdk-ios) and the [crossdk-android](https://github.com/Adikteev/crossdk-android) repositories for more details.
 
 That’s all you need to know!
