@@ -296,8 +296,8 @@ public class CrossDKBridge {
 
     public enum class DebugLevel(val value: Int) {
         NONE(0),
-        VERBOSE(1),
-        ERROR(2);
+        ERROR(1),
+        VERBOSE(2);
 
         companion object {
             fun fromInt(value: Int) = values().first { it.value == value }

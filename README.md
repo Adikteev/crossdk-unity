@@ -20,6 +20,22 @@ The Android version is using **Kotlin 1.8.0**, **Gradle 6.8.3** and **Gradle plu
 
 ## Installation
 
+For installing the CrossDK follow the steps bellow:
+> Please note that because of the change in files structure in this version, if you have an older implementation of the CrossDK in your project you should delete the old CrossDK files and reimport the new version (see steps bellow). make sure also to delete generated launcher and main Templates files inside Assets/plugins/Android of your project
+
+### Using Unity package manager
+
+To use CrossDK in your Unity project, You can integrate the CrossDK as a package by opening the package manager window on your unity editor and choose: add package from git url then fill in the git url of this repository (example using https: https://github.com/Adikteev/crossdk-unity.git), the package manager will automatically add the package as a dependency to your project.
+
+You can then drag the **CrossDK prefab** (located in `Packages\com.adikteev.crossdk\Runtime\Prefabs\CrossDK.prefab`) into your scene.
+
+For more information on using git url with unity package manager visit [unity docs steps](https://docs.unity3d.com/Manual/upm-ui-giturl.html)
+
+### Manually
+
+You can also integrate the CrossDK as a package by downloading the repository content and importing the `package.json` file in your package manager window.
+You can then drag the **CrossDK prefab** (located in `Packages\com.adikteev.crossdk\Runtime\Prefabs\CrossDK.prefab`) into your scene.
+
 ### iOS using CocoaPods 
 
 To install CocoaPods on MacOS, add the following entry:
@@ -32,25 +48,15 @@ The CrossDK pod is automatically installed in the Xcode project when building wi
 
 If you already use CocoaPods in your Unity project, you should consider adding your pods with [EDM4U](https://github.com/googlesamples/unity-jar-resolver) as well. 
 
-### Android using Github Packages
-
-- You can download manually the CrossDK's release package `crossdk-android-X.X.X.aar` directly from
-    our [Github package registry page](https://github.com/Adikteev/crossdk-android/packages/1513405)
-- Place the release package inside the folder `Assets\Plugins\Android`
-- If you are using Unity 2019, you also need do delete the files `launcherTemplate.gradle` and `mainTemplate.gradle` in the folder `Assets\Plugins\Android` and to rename `launcherTemplate2019.gradle` to `launcherTemplate.gradle` and `mainTemplate2019.gradle` to `mainTemplate.gradle`.
-
-## Configuration
-
-To use CrossDK in your Unity project, you must download the `CrossDK.unitypackage` on the [releases page](https://github.com/Adikteev/crossdk-unity-ios/releases), then import it into your project. Once it's finished, drag the **CrossDK prefab** (located in `Assets\CrossDK\CrossDK`) into your scene. 
+(If you encounter compilation issues, you should close Xcode, delete the derived data, relaunch Xcode, perform a clean build of the project, and then build again.)
 
 ### Android specific configuration
 
 - Android sdk requires Gradle 6.8.3 or higher, you can open the preferences menu in the unity editor (Edit > Preferences > External Tools) and set the Gradle path to a folder with Gradle 6.8.3 or higher (you can download it here: https://gradle.org/releases/).
-- If you are using Unity 2019, you also need to delete the files `launcherTemplate.gradle` and `mainTemplate.gradle` in the folder `Assets\Plugins\Android` and to rename `launcherTemplate2019.gradle` to `launcherTemplate.gradle` and `mainTemplate2019.gradle` to `mainTemplate.gradle`.
 
-### Common configuration
+## Common configuration
 
-All the methods you'll need to call are in the `CrossDKSingleton` script on this prefab, and they all are public and static. Thus, you can call them from anywhere at anytime just by adding `import CrossDK;` at the top of any script.
+All the methods you'll need to call are in the `CrossDKSingleton` script on the **CrossDK prefab**, and they all are public and static. Thus, you can call them from anywhere at anytime just by adding `import CrossDK;` at the top of any script.
 
 In order to display an overlay properly, CrossDK requires some information. Since CrossDK won't work without these, you should set them up as soon as possible. In the following example, we use the setup function inside a `Start` event, but it's up to you to set it up wherever you like:
 

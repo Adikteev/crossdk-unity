@@ -13,6 +13,9 @@ namespace CrossDK
         private static extern void crossDKConfigWithAppId(string appId, string apiKey, string userId);
 
         [DllImport("__Internal")]
+        private static extern void setDebugMode(int logLevel);
+
+        [DllImport("__Internal")]
         private static extern void setDeviceId(string deviceId);
 
         [DllImport("__Internal")]
@@ -39,6 +42,8 @@ namespace CrossDK
             object[] parameters = new object[1];
             parameters[0] = (int)level;
             crossDKWrapper.Call(SETUPDEBUGMODE, parameters);
+#elif UNITY_IOS
+            setDebugMode((int)level);
 #endif
         }
 

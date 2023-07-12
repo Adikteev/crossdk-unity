@@ -1,6 +1,6 @@
 <dependencies>
 	<androidPackages>
-		<!--<androidPackage spec="com.adikteev:crossdk-android:1.0.1" />-->
+		<androidPackage spec="com.adikteev:crossdk-android:2.3.0" />
 	</androidPackages>
   <!-- iOS Cocoapod dependencies can be specified by each iosPod element. -->
   <iosPods>
@@ -34,7 +34,7 @@
          * "subspecs" (optional)
            Subspecs to include for the pod.
      -->
-    <iosPod name="CrossDK" version="4.1.2" addToAllTargets="true">
+    <iosPod name="CrossDK" version="4.2.0" addToAllTargets="true">
       <sources>
 		  <source>https://github.com/CocoaPods/Specs</source>
       </sources>

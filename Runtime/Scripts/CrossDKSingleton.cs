@@ -187,7 +187,7 @@ namespace CrossDK
     public enum DebugLevel
     {
         None = 0,
-        Verbose = 1,
-        Error = 2
+        Error = 1,
+        Verbose = 2
     }
 }

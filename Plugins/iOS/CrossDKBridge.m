@@ -73,6 +73,18 @@ void setDeviceId(const char* deviceId) {
     CrossDKConfig.shared.deviceId = nsDeviceId;
 }
 
+/// Set LogLevel
+///
+/// - Parameters:
+///     - logLevel:  Debug Level
+void setDebugMode(LogLevel logLevel) {
+    [
+        CrossDKConfig.shared
+        setLogWithLevel:logLevel
+    ];
+    
+}
+
 /// Displays an Overlay view.
 ///
 /// - Parameters:
