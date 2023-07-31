@@ -2,7 +2,6 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
-using UnityEngine.Networking.Types;
 
 public class CrossDKPreprocess : IPreprocessBuildWithReport
 {

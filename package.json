@@ -1,6 +1,6 @@
 {
   "name": "com.adikteev.crossdk",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "displayName": "CrossDK Unity",
   "description": "This is an implementation of CrossDK for Unity applications.",
   "unity": "2019.4",
