@@ -20,8 +20,8 @@ The Android version is using **Kotlin 1.8.0**, **Gradle 6.8.3** and **Gradle plu
 
 ## Installation
 
-For installing the CrossDK follow the steps bellow:
-> Please note that because of the change in files structure in this version, if you have an older implementation of the CrossDK in your project you should delete the old CrossDK files and reimport the new version (see steps bellow). make sure also to delete generated launcher and main Templates files inside Assets/plugins/Android of your project
+For installing the CrossDK follow the steps below:
+> Please note that because of the change in files structure in this version, if you have an older implementation of the CrossDK in your project you should delete the old CrossDK files and reimport the new version (see steps below). make sure also to delete generated launcher and main Templates files inside Assets/plugins/Android of your project
 
 ### Using Unity package manager
 
