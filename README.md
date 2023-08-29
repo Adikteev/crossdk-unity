@@ -16,7 +16,28 @@ CrossDK for Unity is available with iOS 11 minimal target version, but the `Cros
 
 **Android API** version **>= API 21**
 
-The Android version is using **Kotlin 1.8.0**, **Gradle 6.8.3** and **Gradle plugin 4.2.2**
+The Android version is using **Kotlin 1.8.0** and **Gradle plugin 4.2.2**
+
+For Gradle version, please make sure to use a compatible version as described here [Here](https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin)
+
+This [Documentation](https://docs.unity3d.com/Manual/android-gradle-overview.html) describes which Gradle version to use depending on Unity version 
+
+***Please note*** that if you enable one or both of these build parameters in Player's Publish Settings, you need to update the corresponding files : 
+- if `Custom Main Gradle Template` enabled, update **Assets\Plugins\Android\mainTemplate.gradle**
+- if `Custom Launcher Gradle Template` enabled, update **Assets\Plugins\Android\launcherTemplate.gradle**
+
+Add the following code at the top of the file :
+
+```rb
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion '1.8.0'
+            details.because 'stable version for android cross sdk'
+        }
+    }
+}
+```
 
 ## Installation
 
@@ -49,10 +70,6 @@ The CrossDK pod is automatically installed in the Xcode project when building wi
 If you already use CocoaPods in your Unity project, you should consider adding your pods with [EDM4U](https://github.com/googlesamples/unity-jar-resolver) as well. 
 
 (If you encounter compilation issues, you should close Xcode, delete the derived data, relaunch Xcode, perform a clean build of the project, and then build again.)
-
-### Android specific configuration
-
-- Android sdk requires Gradle 6.8.3 or higher, you can open the preferences menu in the unity editor (Edit > Preferences > External Tools) and set the Gradle path to a folder with Gradle 6.8.3 or higher (you can download it here: https://gradle.org/releases/).
 
 ## Common configuration
 
