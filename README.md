@@ -73,7 +73,7 @@ If you already use CocoaPods in your Unity project, you should consider adding y
 
 ## Common configuration
 
-All the methods you'll need to call are in the `CrossDKSingleton` script on the **CrossDK prefab**, and they all are public and static. Thus, you can call them from anywhere at anytime just by adding `import CrossDK;` at the top of any script.
+All the methods you'll need to call are in the `CrossDKSingleton` script on the **CrossDK prefab**, and they all are public and static. Thus, you can call them from anywhere at anytime just by adding `using CrossDK;` at the top of any script.
 
 In order to display an overlay properly, CrossDK requires some information. Since CrossDK won't work without these, you should set them up as soon as possible. In the following example, we use the setup function inside a `Start` event, but it's up to you to set it up wherever you like:
 
@@ -159,7 +159,7 @@ using CrossDK;
 
 public class CrossDKSample : MonoBehaviour
 {
-    public void DisplayMidSizeOverlayExample()
+    public void PreloadOverlayExample()
     {
         CrossDKSingleton.LoadOverlay(
             OverlayFormat.MidSize, 
